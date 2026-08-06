@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Anirban Chakraborty — Neural interfaces & spatial transcriptomics</title>
+<meta name="description" content="Anirban Chakraborty is a PhD student in Electrical and Computer Engineering at Michigan State University, studying the brain-electrode interface with spatial transcriptomics." />
+<meta name="author" content="Anirban Chakraborty" />
+
+<!-- Social preview. Replace the URL below once your site is live. -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Anirban Chakraborty" />
+<meta property="og:description" content="PhD student in ECE at Michigan State University. Spatial transcriptomics at the brain-electrode interface." />
+<meta property="og:url" content="https://anirban.github.io/" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+/* ============================================================
+   Tokens
+   Palette reads as a multichannel fluorescence image: a cool
+   glass-slide page, one deep tissue field, and four channel
+   hues that also label the sections.
+   ============================================================ */
+:root{
+  --glass:#E7EBEF;
+  --paper:#F8FAFB;
+  --field:#080B10;
+  --ink:#0C1015;
+  --ink-2:#4A545F;
+  --ink-3:#78838F;
+  --rule:#CBD4DC;
+
+  --ch-astro:#1F9E93;   /* research */
+  --ch-oligo:#5B62C9;   /* publications */
+  --ch-neuron:#D2942C;  /* experience */
+  --ch-micro:#C93E77;   /* projects, and the reactive signal */
+  --ch-quiet:#7A8794;   /* service */
+
+  --serif:"Fraunces",Georgia,serif;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,monospace;
+
+  --s-1:0.8125rem;
+  --s0:1.0rem;
+  --s1:1.1875rem;
+  --s2:1.5rem;
+  --s3:clamp(1.75rem,3.4vw,2.4rem);
+  --s4:clamp(2.6rem,7.4vw,5.1rem);
+
+  --gutter:clamp(1.25rem,5vw,4rem);
+  --measure:44rem;
+}
+
+*,*::before,*::after{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto;}}
+
+body{
+  margin:0;
+  background:var(--glass);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:var(--s0);
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+
+a{color:inherit;}
+:focus-visible{
+  outline:2px solid var(--ch-oligo);
+  outline-offset:3px;
+  border-radius:2px;
+}
+
+.wrap{
+  max-width:70rem;
+  margin-inline:auto;
+  padding-inline:var(--gutter);
+}
+
+.skip{
+  position:absolute;left:-9999px;top:0;
+  background:var(--ink);color:#fff;padding:.6rem 1rem;z-index:99;
+  font-family:var(--mono);font-size:var(--s-1);
+}
+.skip:focus{left:0;}
+
+/* ============================================================
+   Top bar
+   ============================================================ */
+.bar{
+  position:sticky;top:0;z-index:40;
+  background:color-mix(in srgb,var(--glass) 86%,transparent);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--rule);
+}
+.bar__in{
+  display:flex;align-items:center;gap:1.5rem;
+  min-height:56px;
+}
+.bar__name{
+  font-family:var(--mono);
+  font-size:var(--s-1);
+  letter-spacing:.02em;
+  text-decoration:none;
+  white-space:nowrap;
+}
+.bar__name b{font-weight:500;}
+.bar nav{
+  margin-left:auto;
+  display:flex;gap:1.25rem;
+  overflow-x:auto;
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+}
+.bar nav::-webkit-scrollbar{display:none;}
+.bar nav a{
+  font-family:var(--mono);
+  font-size:var(--s-1);
+  text-decoration:none;
+  color:var(--ink-2);
+  white-space:nowrap;
+  padding-block:.25rem;
+  border-bottom:1px solid transparent;
+  transition:color .18s ease,border-color .18s ease;
+}
+.bar nav a:hover{color:var(--ink);}
+.bar nav a[aria-current="true"]{
+  color:var(--ink);
+  border-bottom-color:currentColor;
+}
+@media (max-width:640px){
+  .bar__name span{display:none;}
+}
+
+/* ============================================================
+   Hero — the signature: a tissue field with an implanted shank
+   ============================================================ */
+.hero{
+  position:relative;
+  background:var(--field);
+  color:#EEF2F6;
+  isolation:isolate;
+  overflow:hidden;
+}
+#field{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  display:block;
+}
+.hero::after{
+  content:"";
+  position:absolute;inset:0;
+  background:linear-gradient(100deg,rgba(8,11,16,.94) 0%,rgba(8,11,16,.82) 38%,rgba(8,11,16,.18) 72%,rgba(8,11,16,.45) 100%);
+  pointer-events:none;
+}
+.hero__in{
+  position:relative;z-index:2;
+  min-height:min(84vh,720px);
+  display:flex;flex-direction:column;justify-content:center;
+  padding-block:clamp(4.5rem,12vh,8rem) clamp(6.5rem,14vh,9rem);
+}
+.eyebrow{
+  font-family:var(--mono);
+  font-size:var(--s-1);
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:#8FA2B4;
+  margin:0 0 1.4rem;
+  max-width:34rem;
+}
+.eyebrow em{font-style:normal;color:var(--ch-astro);}
+h1{
+  font-family:var(--serif);
+  font-optical-sizing:auto;
+  font-weight:400;
+  font-size:var(--s4);
+  line-height:.98;
+  letter-spacing:-.02em;
+  margin:0 0 1.5rem;
+}
+h1 .surname{display:block;color:#C7D2DD;}
+.lede{
+  max-width:33rem;
+  font-size:var(--s1);
+  line-height:1.55;
+  color:#C4CFDA;
+  margin:0 0 2.2rem;
+}
+.lede b{color:#fff;font-weight:500;}
+.hero__links{display:flex;flex-wrap:wrap;gap:.6rem;}
+.pill{
+  font-family:var(--mono);
+  font-size:var(--s-1);
+  text-decoration:none;
+  padding:.55rem 1rem;
+  border:1px solid rgba(200,215,230,.32);
+  border-radius:999px;
+  color:#DCE5ED;
+  transition:background .18s ease,border-color .18s ease,color .18s ease;
+}
+.pill:hover{background:#EEF2F6;color:var(--field);border-color:#EEF2F6;}
+.pill--solid{background:#EEF2F6;color:var(--field);border-color:#EEF2F6;}
+.pill--solid:hover{background:transparent;color:#EEF2F6;border-color:rgba(200,215,230,.5);}
+
+/* legend + scale bar, sitting on the field like figure furniture */
+.figkey{
+  position:absolute;left:0;right:0;bottom:0;z-index:3;
+  padding:0 var(--gutter) 1.1rem;
+  display:flex;flex-wrap:wrap;align-items:center;gap:.4rem 1.15rem;
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.03em;
+  color:#8595A6;
+}
+.figkey ul{display:flex;flex-wrap:wrap;gap:.4rem 1.15rem;list-style:none;margin:0;padding:0;}
+.figkey li{display:flex;align-items:center;gap:.4rem;}
+.figkey i{width:7px;height:7px;border-radius:50%;background:currentColor;font-style:normal;}
+.figkey .scale{margin-left:auto;display:flex;align-items:center;gap:.5rem;}
+.figkey .scale s{display:block;width:56px;height:2px;background:#8595A6;text-decoration:none;}
+@media (max-width:760px){ .figkey .scale{display:none;} }
+
+/* ============================================================
+   Sections — each one is a channel
+   ============================================================ */
+main{padding-block:clamp(3.5rem,8vw,6rem) 0;}
+.sec{
+  padding-block:clamp(2.5rem,6vw,4.5rem);
+  border-top:1px solid var(--rule);
+}
+.sec:first-of-type{border-top:0;padding-top:0;}
+.sec__head{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:.35rem;
+  margin-bottom:2.2rem;
+}
+.sec__label{
+  font-family:var(--mono);
+  font-size:var(--s-1);
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--chan,var(--ink-2));
+  display:flex;align-items:center;gap:.55rem;
+}
+.sec__label::before{
+  content:"";width:9px;height:9px;background:currentColor;flex:none;
+}
+.sec__title{
+  font-family:var(--serif);
+  font-optical-sizing:auto;
+  font-weight:400;
+  font-size:var(--s3);
+  line-height:1.12;
+  letter-spacing:-.015em;
+  margin:0;
+  max-width:26rem;
+}
+.sec__note{
+  font-size:var(--s-1);
+  color:var(--ink-2);
+  max-width:var(--measure);
+  margin:.4rem 0 0;
+}
+
+#research{--chan:var(--ch-astro);}
+#publications{--chan:var(--ch-oligo);}
+#experience{--chan:var(--ch-neuron);}
+#projects{--chan:var(--ch-micro);}
+#recognition{--chan:var(--ch-quiet);}
+#contact{--chan:var(--ink);}
+
+.prose{max-width:var(--measure);}
+.prose p{margin:0 0 1.05rem;}
+.prose p:last-child{margin-bottom:0;}
+.gene{font-family:var(--mono);font-size:.92em;font-style:italic;}
+
+/* cards */
+.cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(17rem,1fr));
+  gap:1px;
+  background:var(--rule);
+  border:1px solid var(--rule);
+  margin-top:2.2rem;
+}
+.card{
+  background:var(--paper);
+  padding:1.4rem 1.35rem 1.5rem;
+}
+.card h3{
+  font-family:var(--sans);
+  font-size:var(--s0);
+  font-weight:600;
+  margin:0 0 .15rem;
+}
+.card .kicker{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--chan,var(--ink-3));
+  margin:0 0 .7rem;
+}
+.card p{margin:0;font-size:var(--s-1);color:var(--ink-2);line-height:1.6;}
+
+/* publications */
+.pubs{list-style:none;margin:0;padding:0;counter-reset:pub;}
+.pubs li{
+  border-top:1px solid var(--rule);
+  padding:1.35rem 0;
+  display:grid;
+  grid-template-columns:3.2rem 1fr;
+  gap:0 1.2rem;
+  align-items:start;
+}
+.pubs li:last-child{border-bottom:1px solid var(--rule);}
+.pubs .yr{
+  font-family:var(--mono);
+  font-size:var(--s-1);
+  color:var(--ink-3);
+  padding-top:.18rem;
+}
+.pubs h3{
+  font-family:var(--serif);
+  font-optical-sizing:auto;
+  font-weight:400;
+  font-size:var(--s1);
+  line-height:1.28;
+  margin:0 0 .35rem;
+  letter-spacing:-.005em;
+}
+.pubs h3 a{text-decoration-thickness:1px;text-underline-offset:3px;}
+.pubs .authors{font-size:var(--s-1);color:var(--ink-2);margin:0 0 .45rem;}
+.pubs .authors b{font-weight:600;color:var(--ink);}
+.pubs .venue{
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.04em;
+  color:var(--ink-3);
+  margin:0;
+  display:flex;flex-wrap:wrap;gap:.35rem .8rem;
+}
+.tag{
+  display:inline-block;
+  padding:.12rem .45rem;
+  border:1px solid var(--rule);
+  border-radius:2px;
+  background:var(--paper);
+}
+.tag--live{border-color:var(--ch-oligo);color:var(--ch-oligo);}
+@media (max-width:560px){
+  .pubs li{grid-template-columns:1fr;gap:.5rem;}
+  .pubs .yr{padding-top:0;}
+}
+
+/* timeline */
+.tl{list-style:none;margin:0;padding:0;}
+.tl li{
+  position:relative;
+  padding:0 0 2rem 1.6rem;
+  border-left:1px solid var(--rule);
+}
+.tl li:last-child{padding-bottom:0;}
+.tl li::before{
+  content:"";
+  position:absolute;left:-4.5px;top:.55rem;
+  width:8px;height:8px;border-radius:50%;
+  background:var(--glass);
+  border:1.5px solid var(--chan,var(--ink-3));
+}
+.tl .when{
+  font-family:var(--mono);
+  font-size:11px;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--ink-3);
+  display:block;margin-bottom:.2rem;
+}
+.tl h3{
+  font-size:var(--s1);font-weight:600;margin:0 0 .1rem;
+  font-family:var(--sans);letter-spacing:-.01em;
+}
+.tl .org{font-size:var(--s0);color:var(--ink-2);margin:0 0 .55rem;}
+.tl ul{margin:0;padding-left:1.05rem;}
+.tl ul li{
+  border:0;padding:0 0 .3rem;list-style:disc;
+  font-size:var(--s-1);color:var(--ink-2);line-height:1.58;
+}
+.tl ul li::before{display:none;}
+
+.cols{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));
+  gap:2.4rem;
+}
+.cols > div > h3{
+  font-family:var(--mono);
+  font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-3);
+  font-weight:500;
+  margin:0 0 .9rem;
+  padding-bottom:.5rem;
+  border-bottom:1px solid var(--rule);
+}
+.plain{list-style:none;margin:0;padding:0;}
+.plain li{
+  font-size:var(--s-1);
+  color:var(--ink-2);
+  padding:.42rem 0;
+  display:grid;grid-template-columns:3.4rem 1fr;gap:.8rem;
+}
+.plain li span:first-child{font-family:var(--mono);color:var(--ink-3);}
+.plain li strong{font-weight:600;color:var(--ink);}
+.plain--flat li{grid-template-columns:1fr;}
+
+/* skills */
+.skills{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));
+  gap:1.6rem 2.4rem;margin-top:2rem;
+}
+.skills h3{
+  font-family:var(--mono);font-size:11px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--ink-3);margin:0 0 .6rem;
+}
+.chips{display:flex;flex-wrap:wrap;gap:.35rem;list-style:none;margin:0;padding:0;}
+.chips li{
+  font-family:var(--mono);font-size:11px;
+  padding:.25rem .5rem;
+  background:var(--paper);
+  border:1px solid var(--rule);
+  color:var(--ink-2);
+}
+
+/* contact */
+.contact{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));
+  gap:1.6rem;margin-top:1.5rem;
+}
+.contact a{
+  font-family:var(--mono);font-size:var(--s-1);
+  text-decoration:none;
+  border-bottom:1px solid var(--rule);
+  padding-bottom:.35rem;
+  display:block;
+  transition:border-color .18s ease;
+}
+.contact a:hover{border-bottom-color:var(--ink);}
+.contact small{
+  display:block;font-family:var(--mono);font-size:10px;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);
+  margin-bottom:.5rem;
+}
+
+footer{
+  border-top:1px solid var(--rule);
+  margin-top:clamp(3rem,7vw,5rem);
+  padding-block:1.6rem 2.4rem;
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:.03em;
+  color:var(--ink-3);
+  display:flex;flex-wrap:wrap;gap:.5rem 1.5rem;
+}
+
+/* reveal */
+.rise{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.7,.3,1);}
+.rise.in{opacity:1;transform:none;}
+@media (prefers-reduced-motion:reduce){
+  .rise{opacity:1;transform:none;transition:none;}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="bar">
+  <div class="wrap bar__in">
+    <a class="bar__name" href="#top"><b>Anirban Chakraborty</b><span> — MSU</span></a>
+    <nav aria-label="Sections">
+      <a href="#research">research</a>
+      <a href="#publications">publications</a>
+      <a href="#experience">experience</a>
+      <a href="#projects">projects</a>
+      <a href="#recognition">recognition</a>
+      <a href="#contact">contact</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero" id="top">
+  <canvas id="field" aria-hidden="true"></canvas>
+  <div class="wrap hero__in">
+    <p class="eyebrow">Michigan State University · <em>Regenerative Electrode Interface Laboratory</em></p>
+    <h1>Anirban<span class="surname">Chakraborty</span></h1>
+    <p class="lede">I study what brain tissue does after an electrode goes in — <b>one cell at a time</b>. PhD student in Electrical &amp; Computer Engineering, building computational tools for spatial transcriptomics at the brain–electrode interface.</p>
+    <div class="hero__links">
+      <a class="pill pill--solid" href="#publications">Publications</a>
+      <a class="pill" href="#research">Research</a>
+      <a class="pill" href="mailto:chakra96@msu.edu">chakra96@msu.edu</a>
+    </div>
+  </div>
+  <div class="figkey" aria-hidden="true">
+    <ul>
+      <li style="color:var(--ch-neuron)"><i></i>neurons</li>
+      <li style="color:var(--ch-astro)"><i></i>astrocytes</li>
+      <li style="color:var(--ch-oligo)"><i></i>oligodendrocytes</li>
+      <li style="color:var(--ch-micro)"><i></i>reactive microglia</li>
+    </ul>
+    <span class="scale"><s></s>100 µm</span>
+  </div>
+</section>
+
+<main id="main">
+<div class="wrap">
+
+  <!-- ================= RESEARCH ================= -->
+  <section class="sec rise" id="research">
+    <div class="sec__head">
+      <p class="sec__label">Research</p>
+      <h2 class="sec__title">Reading the tissue response, gene by gene</h2>
+    </div>
+    <div class="prose">
+      <p>Implanted microelectrodes lose signal over weeks to months, and the tissue around them is a large part of the reason. My work asks which cells change, which genes drive that change, and how far the effect reaches from the device — using spatial and single-cell transcriptomics rather than a handful of stained markers.</p>
+      <p>Day to day that means building analysis pipelines for 10x Genomics Visium and Xenium datasets, running statistical and network models across cell types, implant materials, brain regions and time points, and turning the result into something a neuroengineer can act on. Reactivity markers like <span class="gene">Gfap</span>, <span class="gene">C1qa</span>, <span class="gene">C3</span> and <span class="gene">Clu</span> are the recurring characters.</p>
+      <p>I came to this from biomedical engineering and hardware, so I care about both ends of the problem: the biology at the interface, and the electrode that provoked it.</p>
+    </div>
+
+    <div class="cards">
+      <article class="card">
+        <p class="kicker">Software · published</p>
+        <h3>SpatiaXen</h3>
+        <p>An interactive, no-code platform for cell-type-resolved analysis of Xenium spatial transcriptomics data — built so wet-lab researchers can explore their own slides without writing a pipeline. Presented as an invited talk at ISMB 2026.</p>
+      </article>
+      <article class="card">
+        <p class="kicker">Method · published</p>
+        <h3>DiffCoRank</h3>
+        <p>A framework for finding hub genes and differential co-expression networks in brain implant-associated tissue, so that the molecular drivers of the response can be ranked rather than eyeballed. Published in <em>BMC Bioinformatics</em>.</p>
+      </article>
+      <article class="card">
+        <p class="kicker">Ongoing</p>
+        <h3>Material and time-course comparisons</h3>
+        <p>Systematic single-cell-resolution comparison of the tissue response to silicon and polyimide electrodes at sub- and supra-cellular scale, across acute to chronic time points.</p>
+      </article>
+    </div>
+
+    <div class="skills">
+      <div>
+        <h3>Languages</h3>
+        <ul class="chips"><li>Python</li><li>R</li><li>MATLAB</li><li>C / C++</li><li>SQL</li><li>Bash</li></ul>
+      </div>
+      <div>
+        <h3>Analysis</h3>
+        <ul class="chips"><li>Xenium</li><li>Visium</li><li>single-cell RNA-seq</li><li>network analysis</li><li>NMF</li><li>Slicer3D</li><li>ImageJ</li></ul>
+      </div>
+      <div>
+        <h3>Machine learning</h3>
+        <ul class="chips"><li>PyTorch</li><li>TensorFlow</li><li>Keras</li><li>scikit-learn</li></ul>
+      </div>
+      <div>
+        <h3>Hardware &amp; systems</h3>
+        <ul class="chips"><li>Altium</li><li>Eagle PCB</li><li>Arduino</li><li>Raspberry Pi</li><li>Jetson Nano</li><li>ROS</li><li>Linux</li><li>Git</li><li>LaTeX</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PUBLICATIONS ================= -->
+  <section class="sec rise" id="publications">
+    <div class="sec__head">
+      <p class="sec__label">Publications</p>
+      <h2 class="sec__title">Peer-reviewed work</h2>
+      <p class="sec__note">Also on <a href="https://scholar.google.com/">Google Scholar</a> — swap this for your own profile link.</p>
+    </div>
+
+    <!--
+      TO ADD A LINK: wrap the title text in an anchor, e.g.
+      <h3><a href="https://doi.org/XX.XXXX/xxxxx">Title here</a></h3>
+    -->
+    <ol class="pubs">
+      <li>
+        <span class="yr">2026</span>
+        <div>
+          <h3>SpatiaXen: an interactive platform for cell-type-resolved spatial transcriptomics analysis of Xenium data</h3>
+          <p class="authors"><b>A. Chakraborty</b>, C. H. Thompson, L. Wade-Kleyn, M. Reimers, E. K. Purcell, et al.</p>
+          <p class="venue"><span class="tag tag--live">Zenodo · software</span><span>2026</span></p>
+        </div>
+      </li>
+      <li>
+        <span class="yr">2026</span>
+        <div>
+          <h3>Spatial transcriptomics to identify novel biomarkers at the brain–electrode interface</h3>
+          <p class="authors">B. Gupta, <b>A. Chakraborty</b>, A. Saxena, E. K. Purcell, et al.</p>
+          <p class="venue"><span class="tag tag--live">Frontiers in Neuroscience</span><span>2026</span></p>
+        </div>
+      </li>
+      <li>
+        <span class="yr">2026</span>
+        <div>
+          <h3>A systematic analysis of the tissue response to silicon and polyimide electrodes of sub- and supra-cellular size with single-cell resolution</h3>
+          <p class="authors">C. H. Thompson, <b>A. Chakraborty</b>, L. Wade-Kleyn, M. Reimers, E. K. Purcell</p>
+          <p class="venue"><span class="tag">Biomaterials · submitted</span><span>preprint available</span></p>
+        </div>
+      </li>
+      <li>
+        <span class="yr">2025</span>
+        <div>
+          <h3>DiffCoRank: a comprehensive framework for discovering hub genes and differential gene co-expression in brain implant-associated tissue responses</h3>
+          <p class="authors"><b>A. Chakraborty</b>, E. K. Purcell, M. G. Moore</p>
+          <p class="venue"><span class="tag tag--live">BMC Bioinformatics</span><span>2025</span></p>
+        </div>
+      </li>
+      <li>
+        <span class="yr">2025</span>
+        <div>
+          <h3>Gene expression changes in cultured reactive rat astrocyte models and comparison to device-associated effects in the brain</h3>
+          <p class="authors">T. E. Riggins, <b>A. Chakraborty</b>, Q. A. Whitsitt, A. Saxena, E. Hunter, B. Hunt, C. H. Thompson, E. K. Purcell</p>
+          <p class="venue"><span class="tag">Scientific Reports · under revision</span></p>
+        </div>
+      </li>
+    </ol>
+
+    <div class="cols" style="margin-top:2.6rem">
+      <div>
+        <h3>Talks &amp; posters</h3>
+        <ul class="plain">
+          <li><span>2026</span><span><strong>Invited talk</strong> — SpatiaXen, ISMB 2026, Washington DC</span></li>
+          <li><span>2025</span><span><strong>Poster</strong> — Society for Neuroscience, San Diego</span></li>
+          <li><span>2025</span><span><strong>Poster</strong> — Henry Ford + MSU Neuroscience Research Symposium</span></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Peer review</h3>
+        <ul class="plain">
+          <li><span>2026</span><span><strong>ISME Communications</strong></span></li>
+          <li><span>2026</span><span><strong>Molecular Neurobiology</strong></span></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Memberships</h3>
+        <ul class="plain plain--flat">
+          <li><span><strong>Society for Neuroscience</strong> (SfN)</span></li>
+          <li><span><strong>International Society for Computational Biology</strong> (ISCB)</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= EXPERIENCE ================= -->
+  <section class="sec rise" id="experience">
+    <div class="sec__head">
+      <p class="sec__label">Experience</p>
+      <h2 class="sec__title">Research, clinic, and the bench in between</h2>
+    </div>
+
+    <div class="cols">
+      <div style="min-width:0">
+        <h3>Positions</h3>
+        <ol class="tl">
+          <li>
+            <span class="when">Jan 2024 — present</span>
+            <h3>Graduate Researcher</h3>
+            <p class="org">Regenerative Electrode Interface Lab, Michigan State University</p>
+            <ul>
+              <li>Build computational pipelines for spatial transcriptomics data from neural implant experiments.</li>
+              <li>Investigate cell-type-specific gene expression at the brain–implant interface.</li>
+              <li>Apply statistical modelling and network analysis to identify drivers of neuroinflammation and glial reactivity.</li>
+              <li>Collaborate across neuroscience, engineering and computational biology.</li>
+            </ul>
+          </li>
+          <li>
+            <span class="when">Aug 2021 — present</span>
+            <h3>Sales Executive, Cardiac Rhythm Management</h3>
+            <p class="org">Medtronic, Dhaka</p>
+            <ul>
+              <li>Technical and clinical support for pacemakers and ICDs in catheterisation labs.</li>
+              <li>Trained clinicians and biomedical engineers on device technology and data interpretation.</li>
+              <li>High Revenue Award (USD), FY 2023 · Basic Brady certification.</li>
+            </ul>
+          </li>
+          <li>
+            <span class="when">Feb — Aug 2021</span>
+            <h3>Research Engineer</h3>
+            <p class="org">Inovace Technologies, Dhaka</p>
+            <ul>
+              <li>Firmware and software for IoT-based industrial automation and real-time monitoring dashboards.</li>
+              <li>Web apps and APIs integrating biometric devices with cloud platforms; embedded hardware validation.</li>
+            </ul>
+          </li>
+          <li>
+            <span class="when">2020 — 2021</span>
+            <h3>Undergraduate Thesis Researcher</h3>
+            <p class="org">mHealth Lab, BUET — advisor Dr. Taufiq Hasan</p>
+            <ul>
+              <li>UNET-based segmentation of lung CT for COVID-19 severity assessment; Dice and IoU above 95%.</li>
+            </ul>
+          </li>
+          <li>
+            <span class="when">Apr 2019</span>
+            <h3>Intern Engineer</h3>
+            <p class="org">Bangabandhu Sheikh Mujib Medical University, Dhaka</p>
+            <ul>
+              <li>Maintenance and technical evaluation of ICU equipment: ventilators, anaesthesia machines, patient monitors.</li>
+            </ul>
+          </li>
+        </ol>
+      </div>
+
+      <div style="min-width:0">
+        <h3>Education</h3>
+        <ol class="tl">
+          <li>
+            <span class="when">Jan 2024 — present</span>
+            <h3>PhD, Electrical &amp; Computer Engineering</h3>
+            <p class="org">Michigan State University · GPA 3.77</p>
+          </li>
+          <li>
+            <span class="when">Jan 2024 — Apr 2026</span>
+            <h3>MS, Electrical &amp; Computer Engineering</h3>
+            <p class="org">Michigan State University</p>
+            <ul>
+              <li>Analog IC &amp; VLSI design, genomics analysis, confocal microscopy, metagenomics, sequencing analysis.</li>
+            </ul>
+          </li>
+          <li>
+            <span class="when">2016 — 2021</span>
+            <h3>BSc, Biomedical Engineering</h3>
+            <p class="org">Bangladesh University of Engineering and Technology (BUET)</p>
+            <ul>
+              <li>Medical imaging, signal processing, machine learning, anatomy and physiology.</li>
+            </ul>
+          </li>
+        </ol>
+
+        <h3 style="margin-top:2rem">Teaching</h3>
+        <ul class="plain">
+          <li><span>ECE 476</span><span>Electro-Optics — SS 2024</span></li>
+          <li><span>ECE 445</span><span>Biomedical Instrumentation — F 2024, F 2026</span></li>
+          <li><span>ECE 345</span><span>Electronic Instrumentation — S 2025, S 2026</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PROJECTS ================= -->
+  <section class="sec rise" id="projects">
+    <div class="sec__head">
+      <p class="sec__label">Projects</p>
+      <h2 class="sec__title">Things built with a team, usually on a deadline</h2>
+    </div>
+
+    <div class="cards">
+      <article class="card">
+        <p class="kicker">2017 — 2021 · team lead</p>
+        <h3>Team Interplanetar — Mars rover</h3>
+        <p>Led a 30-person interdisciplinary team through four rover builds at BUET: autonomous navigation in ROS with LiDAR and 3D cameras, power and telemetry electronics, QGIS terrain simulation, plus proposals and sponsorship. World rank 13 and 2nd in Asia at the European Rover Challenge 2020; rank 16 in 2019; rank 11 at the International Rover Design Challenge 2020.</p>
+      </article>
+      <article class="card">
+        <p class="kicker">2021 · Johns Hopkins Healthcare Design Competition</p>
+        <h3>CellRad — assistive teleradiology</h3>
+        <p>A smartphone platform for remote medical image reporting, with ROI-based enhancement and deep learning for pneumonia detection from X-rays. Top 7 finalist, Health IT track.</p>
+      </article>
+      <article class="card">
+        <p class="kicker">2020 · Edge, Design for Life</p>
+        <h3>Ventilator prototype</h3>
+        <p>A sensor-controlled mechanical ventilator built during the COVID-19 emergency response, regulating airflow and respiratory cycles in closed loop. 2nd runner-up.</p>
+      </article>
+      <article class="card">
+        <p class="kicker">2016 · Ministry of ICT, Bangladesh · team lead</p>
+        <h3>National Hackathon</h3>
+        <p>A collaborative web platform for teacher training and educational resource sharing. National champion, education innovation category.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ================= RECOGNITION ================= -->
+  <section class="sec rise" id="recognition">
+    <div class="sec__head">
+      <p class="sec__label">Recognition &amp; service</p>
+      <h2 class="sec__title">Fellowships, awards, and community</h2>
+    </div>
+    <div class="cols">
+      <div>
+        <h3>Fellowships</h3>
+        <ul class="plain">
+          <li><span>2026</span><span><strong>Graduate Student Leadership Fellow</strong>, MSU Graduate School</span></li>
+          <li><span>2025</span><span><strong>Open Science Fellow</strong>, ICER, MSU</span></li>
+          <li><span>2025</span><span><strong>Graduate Fellow</strong>, MSU Graduate Office</span></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Earlier awards</h3>
+        <ul class="plain">
+          <li><span>2012</span><span><strong>Champion</strong>, National Physics Olympiad</span></li>
+          <li><span>2012</span><span><strong>Winner</strong>, National Mathematics Olympiad</span></li>
+          <li><span>2011</span><span><strong>2nd runner-up</strong>, Divisional Science Olympiad</span></li>
+          <li><span>2010</span><span><strong>Junior Board Scholarship</strong></span></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Mentoring &amp; organising</h3>
+        <ul class="plain">
+          <li><span>2026</span><span><strong>Peer mentor</strong>, ACRES summer research program, MSU</span></li>
+          <li><span>2017</span><span><strong>Lead organiser</strong>, Regional Biology Olympiad — 1,200+ students</span></li>
+          <li><span>—</span><span><strong>Organiser</strong>, Badhon blood donation campaign</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CONTACT ================= -->
+  <section class="sec rise" id="contact">
+    <div class="sec__head">
+      <p class="sec__label">Contact</p>
+      <h2 class="sec__title">Open to collaboration and internships</h2>
+      <p class="sec__note">Happy to talk about spatial transcriptomics, neural interfaces, or anything at the seam between the two. East Lansing, Michigan.</p>
+    </div>
+    <div class="contact">
+      <div><small>Email</small><a href="mailto:chakra96@msu.edu">chakra96@msu.edu</a></div>
+      <div><small>LinkedIn</small><a href="https://linkedin.com/in/anirbanchakraborty1496">/in/anirbanchakraborty1496</a></div>
+      <div><small>GitHub</small><a href="https://github.com/anirban">github.com/anirban</a></div>
+      <div><small>CV</small><a href="cv.pdf">Download PDF</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <span>© <span id="yr">2026</span> Anirban Chakraborty</span>
+    <span>Built with plain HTML, hosted on GitHub Pages</span>
+  </footer>
+</div>
+</main>
+
+<script>
+/* ============================================================
+   The field: cells scattered through cortex, a shank inserted,
+   and reactivity blooming around it. Static if the visitor
+   prefers reduced motion.
+   ============================================================ */
+(function(){
+  var canvas = document.getElementById('field');
+  if(!canvas || !canvas.getContext) return;
+  var ctx = canvas.getContext('2d');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var TYPES = [
+    {c:[210,148,44], w:0.34},  /* neuron   */
+    {c:[31,158,147], w:0.24},  /* astro    */
+    {c:[91,98,201], w:0.24},   /* oligo    */
+    {c:[201,62,119], w:0.18}   /* microglia*/
+  ];
+  var REACT = [214,74,126];
+
+  var W=0,H=0,cells=[],probeX=0,tipY=0,maxD=1,start=0,visible=true;
+
+  function pick(){
+    var r=Math.random(), a=0;
+    for(var i=0;i<TYPES.length;i++){ a+=TYPES[i].w; if(r<=a) return TYPES[i]; }
+    return TYPES[0];
+  }
+
+  function distToShank(x,y){
+    var dx = x-probeX;
+    if(y<=tipY) return Math.abs(dx);
+    var dy = y-tipY;
+    return Math.sqrt(dx*dx+dy*dy);
+  }
+
+  function build(){
+    cells=[];
+    var n = Math.max(320, Math.min(1500, Math.round(W*H/1250)));
+    probeX = W * (W<760 ? 0.52 : 0.68);
+    tipY   = H * 0.60;
+    maxD   = Math.sqrt(W*W+H*H);
+    for(var i=0;i<n;i++){
+      var x=Math.random()*W, y=Math.random()*H;
+      var d=distToShank(x,y);
+      /* a thin acellular gap right at the interface, as in real sections */
+      if(d<6) continue;
+      var t=pick();
+      cells.push({
+        x:x, y:y, d:d, c:t.c,
+        r:0.7+Math.random()*1.7,
+        react: Math.exp(-d/58) * (0.55+Math.random()*0.45),
+        ph: Math.random()*Math.PI*2,
+        delay: Math.min(1, d/maxD)*0.45
+      });
+    }
+  }
+
+  function resize(){
+    var r=canvas.getBoundingClientRect();
+    if(!r.width||!r.height) return;
+    var dpr=Math.min(window.devicePixelRatio||1, 2);
+    W=r.width; H=r.height;
+    canvas.width=Math.round(W*dpr);
+    canvas.height=Math.round(H*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    build();
+    if(reduce) draw(4000);
+  }
+
+  function ease(t){ return t<0?0 : t>1?1 : 1-Math.pow(1-t,3); }
+  function mix(a,b,t){ return [a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t, a[2]+(b[2]-a[2])*t]; }
+
+  function draw(ms){
+    var tShank = ease(ms/900);
+    var tCell  = ms/1500;
+    var bloom  = ease((ms-950)/1400);
+    var amb    = ms/1000;
+
+    ctx.clearRect(0,0,W,H);
+
+    /* faint tissue gradient so the field isn't flat black */
+    var bg=ctx.createRadialGradient(probeX,tipY*0.7,10,probeX,tipY*0.7,Math.max(W,H)*0.85);
+    bg.addColorStop(0,'rgba(24,34,48,0.85)');
+    bg.addColorStop(1,'rgba(8,11,16,0)');
+    ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
+
+    /* reactive halo */
+    if(bloom>0){
+      var g=ctx.createRadialGradient(probeX,tipY*0.62,4,probeX,tipY*0.62,Math.min(W,H)*0.46);
+      g.addColorStop(0,'rgba(201,62,119,'+(0.20*bloom)+')');
+      g.addColorStop(0.45,'rgba(201,62,119,'+(0.06*bloom)+')');
+      g.addColorStop(1,'rgba(201,62,119,0)');
+      ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    }
+
+    /* cells */
+    for(var i=0;i<cells.length;i++){
+      var c=cells[i];
+      var a=ease((tCell-c.delay)/0.9);
+      if(a<=0) continue;
+      var tw = reduce ? 1 : (0.86+0.14*Math.sin(amb*0.7+c.ph));
+      var rw = Math.min(1, c.react*bloom);
+      var col = mix(c.c, REACT, rw);
+      var alpha = (0.34+0.5*rw)*a*tw;
+      ctx.beginPath();
+      ctx.arc(c.x, c.y, c.r*(1+0.55*rw), 0, Math.PI*2);
+      ctx.fillStyle='rgba('+(col[0]|0)+','+(col[1]|0)+','+(col[2]|0)+','+alpha.toFixed(3)+')';
+      ctx.fill();
+    }
+
+    /* the shank */
+    var wS = W<760 ? 9 : 12;
+    var yEnd = tipY*tShank;
+    if(yEnd>2){
+      var sg=ctx.createLinearGradient(probeX-wS/2,0,probeX+wS/2,0);
+      sg.addColorStop(0,'#1B222C');
+      sg.addColorStop(0.42,'#6E7987');
+      sg.addColorStop(0.62,'#98A3B0');
+      sg.addColorStop(1,'#141A22');
+      ctx.fillStyle=sg;
+      ctx.beginPath();
+      ctx.moveTo(probeX-wS/2, -10);
+      ctx.lineTo(probeX+wS/2, -10);
+      ctx.lineTo(probeX+wS/2, yEnd-wS*0.9);
+      ctx.lineTo(probeX, yEnd);
+      ctx.lineTo(probeX-wS/2, yEnd-wS*0.9);
+      ctx.closePath();
+      ctx.fill();
+
+      /* electrode sites */
+      var sites=6, size=wS*0.42;
+      for(var s=0;s<sites;s++){
+        var sy = yEnd - wS*2.2 - s*(wS*2.0);
+        if(sy < 4) break;
+        ctx.fillStyle='rgba(224,196,140,'+(0.55+0.45*Math.abs(Math.sin(reduce?1:amb*0.9+s)))+')';
+        ctx.fillRect(probeX-size/2, sy, size, size);
+      }
+    }
+  }
+
+  var raf;
+  function loop(now){
+    if(!start) start=now;
+    if(visible) draw(now-start);
+    raf=requestAnimationFrame(loop);
+  }
+
+  resize();
+  var rt;
+  window.addEventListener('resize', function(){
+    clearTimeout(rt); rt=setTimeout(resize, 150);
+  });
+
+  if(!reduce){
+    if('IntersectionObserver' in window){
+      new IntersectionObserver(function(e){ visible = e[0].isIntersecting; })
+        .observe(canvas);
+    }
+    raf=requestAnimationFrame(loop);
+  }
+})();
+
+/* section reveals */
+(function(){
+  var els=document.querySelectorAll('.rise');
+  if(!('IntersectionObserver' in window)){
+    for(var i=0;i<els.length;i++) els[i].classList.add('in');
+    return;
+  }
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  },{rootMargin:'0px 0px -12% 0px'});
+  els.forEach(function(el){ io.observe(el); });
+})();
+
+/* nav highlight */
+(function(){
+  var links=Array.prototype.slice.call(document.querySelectorAll('.bar nav a'));
+  var map={};
+  links.forEach(function(a){ map[a.getAttribute('href').slice(1)]=a; });
+  var secs=Object.keys(map).map(function(id){ return document.getElementById(id); }).filter(Boolean);
+  if(!('IntersectionObserver' in window)) return;
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){
+        links.forEach(function(a){ a.removeAttribute('aria-current'); });
+        var a=map[en.target.id];
+        if(a) a.setAttribute('aria-current','true');
+      }
+    });
+  },{rootMargin:'-45% 0px -50% 0px'});
+  secs.forEach(function(s){ io.observe(s); });
+})();
+
+document.getElementById('yr').textContent=new Date().getFullYear();
+</script>
+</body>
+</html>
